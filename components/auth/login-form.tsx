@@ -44,8 +44,8 @@ export function LoginForm() {
     setError(null)
 
     try {
-      // Log form data for debugging
-      console.log("Login attempt:", { email: formData.email })
+      console.log("[v0] Login form submission started")
+      console.log("[v0] Form data:", { email: formData.email, passwordLength: formData.password.length })
 
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -55,12 +55,17 @@ export function LoginForm() {
         body: JSON.stringify(formData),
       })
 
+      console.log("[v0] API response status:", response.status)
+      console.log("[v0] API response ok:", response.ok)
+
       if (!response.ok) {
         const data = await response.json()
+        console.log("[v0] API error response:", data)
         throw new Error(data.message || "Login failed")
       }
 
       const data = await response.json()
+      console.log("[v0] Login successful, user data:", data.user)
 
       toast({
         title: "Success",
@@ -69,15 +74,30 @@ export function LoginForm() {
 
       // Store user session in localStorage for persistence
       localStorage.setItem("nooraura_user", JSON.stringify(data.user))
+      console.log("[v0] User data stored in localStorage")
 
       if (isAdmin(data.user)) {
-        router.push("/admin")
+        console.log("[v0] User is admin, redirecting to /admin")
+        try {
+          router.push("/admin")
+          console.log("[v0] Router.push executed")
+
+          // Fallback redirect after a short delay
+          setTimeout(() => {
+            console.log("[v0] Fallback redirect executing")
+            window.location.href = "/admin"
+          }, 1000)
+        } catch (routerError) {
+          console.error("[v0] Router.push failed:", routerError)
+          window.location.href = "/admin"
+        }
       } else {
+        console.log("[v0] User is not admin, showing error")
         setError("Access denied. Admin credentials required.")
         return
       }
     } catch (err) {
-      console.error("Login error:", err)
+      console.error("[v0] Login error:", err)
       setError(err instanceof Error ? err.message : "An unexpected error occurred")
 
       toast({
@@ -87,6 +107,7 @@ export function LoginForm() {
       })
     } finally {
       setIsLoading(false)
+      console.log("[v0] Login process completed")
     }
   }
 
