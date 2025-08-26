@@ -113,7 +113,7 @@ export function LoginForm() {
               required
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="sefudinkadu@gmail.com"
+              placeholder="Enter admin email"
               className="w-full"
             />
           </div>
@@ -127,7 +127,7 @@ export function LoginForm() {
               required
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="sajjadkaduu"
+              placeholder="Enter admin password"
               className="w-full"
             />
           </div>
